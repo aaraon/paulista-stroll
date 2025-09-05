@@ -1,12 +1,14 @@
 import { Canvas } from '@react-three/fiber'
 import { Physics } from '@react-three/cannon'
 import { Sky, Stats, KeyboardControls } from '@react-three/drei'
-import { Suspense } from 'react'
+import { Suspense, useState } from 'react'
 import { Player } from './Player'
 import { Environment } from './Environment'
 import { NPCManager } from './NPCManager'
 import { GameHUD } from './GameHUD'
 import { GameAudio } from './GameAudio'
+import { PlayerTracker } from './PlayerTracker'
+import * as THREE from 'three'
 
 const keyMap = [
   { name: 'forward', keys: ['ArrowUp', 'KeyW'] },
@@ -18,6 +20,9 @@ const keyMap = [
 ]
 
 export const SaoPauloGame = () => {
+  const [playerPosition, setPlayerPosition] = useState(new THREE.Vector3())
+  const [fps, setFps] = useState(0)
+
   return (
     <div className="w-full h-screen relative">
       <KeyboardControls map={keyMap}>
@@ -27,6 +32,12 @@ export const SaoPauloGame = () => {
           gl={{ antialias: true, alpha: false }}
         >
           <Suspense fallback={null}>
+            {/* Player tracking component */}
+            <PlayerTracker 
+              onPositionUpdate={setPlayerPosition}
+              onFpsUpdate={setFps}
+            />
+
             {/* Lighting setup for São Paulo atmosphere */}
             <ambientLight intensity={0.4} color="#f0f0f0" />
             <directionalLight
@@ -64,7 +75,7 @@ export const SaoPauloGame = () => {
       </KeyboardControls>
 
       {/* Game UI Layer */}
-      <GameHUD />
+      <GameHUD playerPosition={playerPosition} fps={fps} />
       <GameAudio />
     </div>
   )

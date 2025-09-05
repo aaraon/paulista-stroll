@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react'
-import { useFrame, useThree } from '@react-three/fiber'
 import * as THREE from 'three'
 
 const MiniMap = ({ playerPosition }: { playerPosition: THREE.Vector3 }) => {
@@ -114,13 +113,7 @@ const LocationDisplay = ({ playerPosition }: { playerPosition: THREE.Vector3 }) 
   )
 }
 
-const PerformanceStats = () => {
-  const [fps, setFps] = useState(0)
-  
-  useFrame((state) => {
-    setFps(Math.round(1 / state.clock.getDelta()))
-  })
-  
+const PerformanceStats = ({ fps }: { fps: number }) => {
   if (process.env.NODE_ENV !== 'development') return null
   
   return (
@@ -130,14 +123,13 @@ const PerformanceStats = () => {
   )
 }
 
-export const GameHUD = () => {
-  const { camera } = useThree()
-  const [playerPosition, setPlayerPosition] = useState(new THREE.Vector3())
-  const [showInstructions, setShowInstructions] = useState(true)
+interface GameHUDProps {
+  playerPosition: THREE.Vector3
+  fps: number
+}
 
-  useFrame(() => {
-    setPlayerPosition(camera.position.clone())
-  })
+export const GameHUD = ({ playerPosition, fps }: GameHUDProps) => {
+  const [showInstructions, setShowInstructions] = useState(true)
 
   // Hide instructions after 10 seconds
   useEffect(() => {
@@ -151,7 +143,7 @@ export const GameHUD = () => {
       <Instructions show={showInstructions} />
       <LocationDisplay playerPosition={playerPosition} />
       <MiniMap playerPosition={playerPosition} />
-      <PerformanceStats />
+      <PerformanceStats fps={fps} />
     </div>
   )
 }
