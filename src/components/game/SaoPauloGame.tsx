@@ -22,14 +22,45 @@ const keyMap = [
 export const SaoPauloGame = () => {
   const [playerPosition, setPlayerPosition] = useState(new THREE.Vector3())
   const [fps, setFps] = useState(0)
+  const [webglError, setWebglError] = useState<string | null>(null)
+
+  // Handle WebGL context creation errors
+  const handleCreated = ({ gl }: { gl: THREE.WebGLRenderer }) => {
+    console.log('WebGL context created successfully')
+  }
+
+  const handleError = (error: any) => {
+    console.error('WebGL Error:', error)
+    setWebglError('Your device does not support WebGL or it is disabled. Please enable hardware acceleration in your browser settings.')
+  }
+
+  if (webglError) {
+    return (
+      <div className="w-full h-screen flex items-center justify-center bg-background">
+        <div className="text-center p-8 max-w-md">
+          <h2 className="text-xl font-semibold mb-4">WebGL Not Available</h2>
+          <p className="text-muted-foreground mb-4">{webglError}</p>
+          <p className="text-sm text-muted-foreground">
+            Try refreshing the page or enabling hardware acceleration in your browser settings.
+          </p>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="w-full h-screen relative">
       <KeyboardControls map={keyMap}>
         <Canvas
-          shadows
           camera={{ fov: 75, near: 0.1, far: 1000, position: [0, 1.6, 5] }}
-          gl={{ antialias: true, alpha: false }}
+          gl={{ 
+            antialias: false, // Disable antialiasing for better compatibility
+            alpha: false,
+            powerPreference: 'default', // Use default power preference
+            failIfMajorPerformanceCaveat: false // Don't fail on performance caveats
+          }}
+          onCreated={handleCreated}
+          onError={handleError}
         >
           <Suspense fallback={null}>
             {/* Player tracking component */}
