@@ -43,15 +43,50 @@ const Building = ({ position, size, color, name }: any) => {
     material: 'building',
   }))
 
+  // Create more detailed building with higher polygon count
+  const windowColor = '#87CEEB'
+  const windowRows = Math.floor(size[1] / 3)
+  const windowCols = Math.max(3, Math.floor(size[0] / 2))
+
   return (
-    <mesh ref={buildingRef as any} castShadow receiveShadow>
-      <boxGeometry args={size} />
-      <meshLambertMaterial color={color} />
-      {/* Building label (visible when close) */}
-      <mesh position={[0, size[1]/2 + 2, 0]}>
-        {/* This would be replaced with proper 3D text in production */}
+    <group>
+      {/* Main building structure with higher resolution */}
+      <mesh ref={buildingRef as any} castShadow receiveShadow>
+        <boxGeometry args={[size[0], size[1], size[2]]} />
+        <meshPhongMaterial 
+          color={color}
+          shininess={30}
+        />
       </mesh>
-    </mesh>
+      
+      {/* Windows for more realistic appearance */}
+      {Array.from({ length: windowRows }, (_, row) =>
+        Array.from({ length: windowCols }, (_, col) => (
+          <mesh 
+            key={`${row}-${col}`} 
+            position={[
+              position[0] - size[0]/2 + (col + 0.5) * (size[0] / windowCols),
+              position[1] - size[1]/2 + (row + 0.5) * (size[1] / windowRows),
+              position[2] + size[2]/2 + 0.01
+            ]}
+            castShadow
+          >
+            <planeGeometry args={[size[0] / windowCols * 0.7, size[1] / windowRows * 0.7]} />
+            <meshPhongMaterial 
+              color={Math.random() > 0.3 ? windowColor : '#2C5282'}
+              transparent
+              opacity={0.8}
+            />
+          </mesh>
+        ))
+      )}
+      
+      {/* Rooftop details */}
+      <mesh position={[position[0], position[1] + size[1]/2 + 0.5, position[2]]} castShadow>
+        <boxGeometry args={[size[0] * 0.9, 1, size[2] * 0.9]} />
+        <meshPhongMaterial color="#4A5568" />
+      </mesh>
+    </group>
   )
 }
 
@@ -65,8 +100,11 @@ const Sidewalk = ({ position, size }: { position: [number, number, number], size
 
   return (
     <mesh ref={sidewalkRef as any} receiveShadow>
-      <boxGeometry args={size} />
-      <meshLambertMaterial color="#E2E8F0" />
+      <boxGeometry args={[size[0], size[1], size[2], 8, 1, 8]} />
+      <meshStandardMaterial 
+        color="#E2E8F0"
+        roughness={0.8}
+      />
     </mesh>
   )
 }
@@ -81,8 +119,11 @@ const Street = ({ position, size }: { position: [number, number, number], size: 
 
   return (
     <mesh ref={streetRef as any} receiveShadow>
-      <boxGeometry args={size} />
-      <meshLambertMaterial color="#4A5568" />
+      <boxGeometry args={[size[0], size[1], size[2], 12, 1, 12]} />
+      <meshStandardMaterial 
+        color="#4A5568"
+        roughness={0.9}
+      />
     </mesh>
   )
 }
@@ -114,8 +155,11 @@ export const Environment = () => {
     <group>
       {/* Ground */}
       <mesh ref={groundRef as any} receiveShadow>
-        <boxGeometry args={[200, 1, 200]} />
-        <meshLambertMaterial color="#718096" />
+        <boxGeometry args={[200, 1, 200, 20, 1, 20]} />
+        <meshStandardMaterial 
+          color="#718096"
+          roughness={0.8}
+        />
       </mesh>
 
       {/* Main Avenida Paulista */}

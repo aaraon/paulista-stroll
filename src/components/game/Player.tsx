@@ -74,11 +74,11 @@ export const Player = () => {
 
     // Movement calculations
     const direction = new THREE.Vector3()
-    const frontVector = new THREE.Vector3(0, 0, Number(backward) - Number(forward))
-    const sideVector = new THREE.Vector3(Number(leftward) - Number(rightward), 0, 0)
+    const frontVector = new THREE.Vector3(0, 0, Number(forward) - Number(backward))
+    const sideVector = new THREE.Vector3(Number(rightward) - Number(leftward), 0, 0)
     
     direction
-      .subVectors(frontVector, sideVector)
+      .addVectors(frontVector, sideVector)
       .normalize()
       .multiplyScalar(sprint ? 8 : 4) // Sprint speed vs walk speed
       .applyEuler(euler)
