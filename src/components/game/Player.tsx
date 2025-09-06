@@ -65,11 +65,6 @@ export const Player = () => {
     const sprint = controls.sprint
     const jump = controls.jump
 
-    // Debug logging
-    if (forward || backward || leftward || rightward) {
-      console.log('Controls:', { forward, backward, leftward, rightward })
-    }
-
     // Update camera rotation from mouse
     euler.setFromQuaternion(camera.quaternion)
     euler.y = mouseRef.current.x
@@ -87,11 +82,6 @@ export const Player = () => {
       .multiplyScalar(sprint ? 8 : 4) // Sprint speed vs walk speed
       .applyEuler(euler)
 
-    // Debug the direction vector
-    if (forward || backward || leftward || rightward) {
-      console.log('Direction vector:', direction)
-    }
-
     // Update velocity
     velocityRef.current.x = direction.x
     velocityRef.current.z = direction.z
@@ -103,7 +93,6 @@ export const Player = () => {
 
     // Apply movement to physics body with proper API
     if (playerBody.current) {
-      console.log('Applying velocity:', velocityRef.current)
       // Use the proper cannon.js API with type casting
       const body = playerBody.current as any
       body.velocity.x = velocityRef.current.x

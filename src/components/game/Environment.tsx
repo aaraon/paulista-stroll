@@ -3,15 +3,8 @@ import { useLoader } from '@react-three/fiber'
 import { useBox } from '@react-three/cannon'
 import * as THREE from 'three'
 
-// São Paulo landmarks data
+// São Paulo landmarks data (excluding MASP - will be rendered separately)
 const landmarks = [
-  {
-    id: 'masp',
-    name: 'MASP - Museu de Arte',
-    position: [-20, 0, -30],
-    size: [25, 12, 8],
-    color: '#8B0000', // Dark red for MASP's iconic color
-  },
   {
     id: 'bank-building-1',
     name: 'Edifício Copacabana',
@@ -34,6 +27,146 @@ const landmarks = [
     color: '#4299E1', // Blue glass
   }
 ]
+
+// Specialized MASP Building Component
+const MASPBuilding = ({ position }: { position: [number, number, number] }) => {
+  const [x, y, z] = position
+  
+  // Main suspended red block
+  const blockWidth = 25
+  const blockHeight = 8
+  const blockDepth = 8
+  const blockY = 10 // Suspended height
+  
+  // Four external pillars
+  const pillarWidth = 2
+  const pillarHeight = blockY + blockHeight/2
+  const pillarPositions: [number, number, number][] = [
+    [x - blockWidth/2 + pillarWidth/2, pillarHeight/2, z - blockDepth/2 + pillarWidth/2],
+    [x + blockWidth/2 - pillarWidth/2, pillarHeight/2, z - blockDepth/2 + pillarWidth/2], 
+    [x - blockWidth/2 + pillarWidth/2, pillarHeight/2, z + blockDepth/2 - pillarWidth/2],
+    [x + blockWidth/2 - pillarWidth/2, pillarHeight/2, z + blockDepth/2 - pillarWidth/2]
+  ]
+
+  // Physics bodies
+  const [mainBlockRef] = useBox(() => ({
+    position: [x, y + blockY, z],
+    args: [blockWidth, blockHeight, blockDepth],
+    type: 'Static',
+  }))
+
+  pillarPositions.forEach((pillarPos, index) => {
+    useBox(() => ({
+      position: pillarPos,
+      args: [pillarWidth, pillarHeight, pillarWidth],
+      type: 'Static',
+    }))
+  })
+
+  return (
+    <group>
+      {/* Main suspended red block */}
+      <mesh ref={mainBlockRef as any} position={[x, y + blockY, z]} castShadow receiveShadow>
+        <boxGeometry args={[blockWidth, blockHeight, blockDepth]} />
+        <meshPhongMaterial color="#8B0000" shininess={30} />
+      </mesh>
+
+      {/* Four external red pillars */}
+      {pillarPositions.map((pillarPos, index) => (
+        <mesh key={`pillar-${index}`} position={pillarPos} castShadow receiveShadow>
+          <boxGeometry args={[pillarWidth, pillarHeight, pillarWidth]} />
+          <meshPhongMaterial color="#8B0000" shininess={30} />
+        </mesh>
+      ))}
+
+      {/* Two thick horizontal internal beams at 1st-2nd floor level */}
+      <mesh position={[x, y + blockY - 1, z - blockDepth/4]} castShadow receiveShadow>
+        <boxGeometry args={[blockWidth - 4, 1.5, 1]} />
+        <meshPhongMaterial color="#6B0000" shininess={20} />
+      </mesh>
+      <mesh position={[x, y + blockY - 1, z + blockDepth/4]} castShadow receiveShadow>
+        <boxGeometry args={[blockWidth - 4, 1.5, 1]} />
+        <meshPhongMaterial color="#6B0000" shininess={20} />
+      </mesh>
+
+      {/* Slim external roof beam (thinner than internal) */}
+      <mesh position={[x, y + blockY + blockHeight/2 + 0.25, z]} castShadow receiveShadow>
+        <boxGeometry args={[blockWidth + 2, 0.5, blockDepth + 1]} />
+        <meshPhongMaterial color="#7A0000" shininess={25} />
+      </mesh>
+
+      {/* Blue grid windows on front façade */}
+      {Array.from({ length: 4 }, (_, row) =>
+        Array.from({ length: 8 }, (_, col) => (
+          <mesh 
+            key={`window-front-${row}-${col}`}
+            position={[
+              x - blockWidth/2 + (col + 0.5) * (blockWidth / 8),
+              y + blockY - blockHeight/2 + (row + 0.5) * (blockHeight / 4),
+              z + blockDepth/2 + 0.01
+            ]}
+          >
+            <planeGeometry args={[2.5, 1.5]} />
+            <meshPhongMaterial 
+              color="#4299E1"
+              transparent
+              opacity={0.6}
+            />
+          </mesh>
+        ))
+      )}
+
+      {/* Blue grid windows on back façade */}
+      {Array.from({ length: 4 }, (_, row) =>
+        Array.from({ length: 8 }, (_, col) => (
+          <mesh 
+            key={`window-back-${row}-${col}`}
+            position={[
+              x - blockWidth/2 + (col + 0.5) * (blockWidth / 8),
+              y + blockY - blockHeight/2 + (row + 0.5) * (blockHeight / 4),
+              z - blockDepth/2 - 0.01
+            ]}
+            rotation={[0, Math.PI, 0]}
+          >
+            <planeGeometry args={[2.5, 1.5]} />
+            <meshPhongMaterial 
+              color="#4299E1"
+              transparent
+              opacity={0.6}
+            />
+          </mesh>
+        ))
+      )}
+
+      {/* Adjacent tall dark-grey cuboid tower */}
+      <mesh position={[x + 35, y + 20, z]} castShadow receiveShadow>
+        <boxGeometry args={[12, 40, 10]} />
+        <meshPhongMaterial color="#2D3748" shininess={15} />
+      </mesh>
+
+      {/* Tower windows */}
+      {Array.from({ length: 12 }, (_, row) =>
+        Array.from({ length: 3 }, (_, col) => (
+          <mesh 
+            key={`tower-window-${row}-${col}`}
+            position={[
+              x + 35 - 6 + (col + 0.5) * 4,
+              y + 2 + row * 3,
+              z + 5.01
+            ]}
+          >
+            <planeGeometry args={[2, 2]} />
+            <meshPhongMaterial 
+              color="#87CEEB"
+              transparent
+              opacity={0.7}
+            />
+          </mesh>
+        ))
+      )}
+    </group>
+  )
+}
 
 const Building = ({ position, size, color, name }: any) => {
   const [buildingRef] = useBox(() => ({
@@ -197,6 +330,9 @@ export const Environment = () => {
           name={landmark.name}
         />
       ))}
+
+      {/* MASP - Museu de Arte de São Paulo with detailed architecture */}
+      <MASPBuilding position={[-20, 0, -30]} />
 
       {/* Street furniture */}
       {/* Bus stops */}
