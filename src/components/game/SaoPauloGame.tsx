@@ -1,7 +1,7 @@
 import { Canvas } from '@react-three/fiber'
 import { Physics } from '@react-three/cannon'
 import { Sky, Stats, KeyboardControls } from '@react-three/drei'
-import { Suspense, useState } from 'react'
+import { Suspense, useState, useEffect } from 'react'
 import { Player } from './Player'
 import { Environment } from './Environment'
 import { NPCManager } from './NPCManager'
@@ -19,10 +19,28 @@ const keyMap = [
   { name: 'jump', keys: ['Space'] },
 ]
 
+// Function to check WebGL availability
+const checkWebGLSupport = (): boolean => {
+  try {
+    const canvas = document.createElement('canvas')
+    const context = canvas.getContext('webgl') || canvas.getContext('experimental-webgl')
+    return !!context
+  } catch (e) {
+    return false
+  }
+}
+
 export const SaoPauloGame = () => {
   const [playerPosition, setPlayerPosition] = useState(new THREE.Vector3())
   const [fps, setFps] = useState(0)
   const [webglError, setWebglError] = useState<string | null>(null)
+
+  // Check WebGL support on component mount
+  useEffect(() => {
+    if (!checkWebGLSupport()) {
+      setWebglError('WebGL is not supported or is disabled in your browser. Please enable hardware acceleration or try a different browser.')
+    }
+  }, [])
 
   // Handle WebGL context creation errors
   const handleCreated = ({ gl }: { gl: THREE.WebGLRenderer }) => {
