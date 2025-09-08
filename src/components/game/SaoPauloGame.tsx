@@ -71,12 +71,18 @@ export const SaoPauloGame = () => {
       <KeyboardControls map={keyMap}>
         <Canvas
           camera={{ fov: 75, near: 0.1, far: 1000, position: [0, 1.6, 5] }}
+          dpr={[1, 2]} // High DPI support for crisp rendering
           gl={{ 
-            antialias: false, // Disable antialiasing for better compatibility
+            antialias: true, // Enable antialiasing for smoother edges
             alpha: false,
-            powerPreference: 'default', // Use default power preference
-            failIfMajorPerformanceCaveat: false // Don't fail on performance caveats
+            powerPreference: 'high-performance', // Request high-performance GPU
+            failIfMajorPerformanceCaveat: false,
+            toneMapping: THREE.ACESFilmicToneMapping, // Better color reproduction
+            toneMappingExposure: 1.2,
+            outputColorSpace: THREE.SRGBColorSpace, // Accurate color space
+            shadowMapType: THREE.PCFSoftShadowMap // Softer, higher quality shadows
           }}
+          shadows="soft" // Enable soft shadows
           onCreated={handleCreated}
           onError={handleError}
         >
@@ -88,19 +94,25 @@ export const SaoPauloGame = () => {
             />
 
             {/* Lighting setup for São Paulo atmosphere */}
-            <ambientLight intensity={0.4} color="#f0f0f0" />
+            <ambientLight intensity={0.3} color="#F0F8FF" />
             <directionalLight
               position={[100, 100, 50]}
-              intensity={1}
+              intensity={1.2}
               castShadow
-              shadow-mapSize={[2048, 2048]}
+              shadow-mapSize={[4096, 4096]}
               shadow-camera-near={1}
               shadow-camera-far={500}
               shadow-camera-left={-100}
               shadow-camera-right={100}
               shadow-camera-top={100}
               shadow-camera-bottom={-100}
+              color="#FFF8DC"
             />
+            
+            {/* Additional fill lighting for better visual depth */}
+            <pointLight position={[-50, 30, 0]} intensity={0.4} color="#FFE4B5" distance={80} />
+            <pointLight position={[50, 25, 0]} intensity={0.3} color="#E0FFFF" distance={70} />
+            <hemisphereLight args={["#87CEEB", "#8B4513", 0.2]} />
             
             {/* São Paulo sky */}
             <Sky

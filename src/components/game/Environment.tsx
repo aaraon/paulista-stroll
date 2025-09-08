@@ -10,21 +10,42 @@ const landmarks = [
     name: 'Edifício Copacabana',
     position: [15, 0, -25],
     size: [12, 35, 8],
-    color: '#4A5568', // Grey concrete
+    color: '#475569', // Modern steel blue
   },
   {
     id: 'bank-building-2', 
     name: 'Centro Empresarial',
     position: [30, 0, -10],
     size: [10, 28, 12],
-    color: '#2D3748', // Darker concrete
+    color: '#1F2937', // Deep charcoal
   },
   {
     id: 'shopping-center',
     name: 'Shopping Paulista',
     position: [-35, 0, 10],
     size: [20, 15, 15],
-    color: '#4299E1', // Blue glass
+    color: '#0EA5E9', // Bright sky blue
+  },
+  {
+    id: 'residential-tower',
+    name: 'Edifício Residencial',
+    position: [-20, 0, 35],
+    size: [8, 42, 8],
+    color: '#F59E0B', // Warm amber
+  },
+  {
+    id: 'corporate-plaza',
+    name: 'Plaza Corporativa',
+    position: [45, 0, 20],
+    size: [15, 25, 18],
+    color: '#10B981', // Emerald green
+  },
+  {
+    id: 'hotel-complex',
+    name: 'Hotel São Paulo',
+    position: [-45, 0, -15],
+    size: [22, 20, 12],
+    color: '#8B5CF6', // Rich purple
   }
 ]
 
@@ -84,42 +105,74 @@ const MASPBuilding = ({ position }: { position: [number, number, number] }) => {
     <group>
       {/* Main suspended red block */}
       <mesh ref={mainBlockRef as any} position={[x, y + blockY, z]} castShadow receiveShadow>
-        <boxGeometry args={[blockWidth, blockHeight, blockDepth]} />
-        <meshPhongMaterial color="#8B0000" shininess={30} />
+        <boxGeometry args={[blockWidth, blockHeight, blockDepth, 32, 16, 16]} />
+        <meshStandardMaterial 
+          color="#B91C1C" 
+          roughness={0.2}
+          metalness={0.6}
+        />
       </mesh>
 
       {/* Four external red pillars */}
       <mesh ref={pillar1Ref as any} position={pillarPositions[0]} castShadow receiveShadow>
-        <boxGeometry args={[pillarWidth, pillarHeight, pillarWidth]} />
-        <meshPhongMaterial color="#8B0000" shininess={30} />
+        <boxGeometry args={[pillarWidth, pillarHeight, pillarWidth, 8, 64, 8]} />
+        <meshStandardMaterial 
+          color="#991B1B" 
+          roughness={0.3}
+          metalness={0.5}
+        />
       </mesh>
       <mesh ref={pillar2Ref as any} position={pillarPositions[1]} castShadow receiveShadow>
-        <boxGeometry args={[pillarWidth, pillarHeight, pillarWidth]} />
-        <meshPhongMaterial color="#8B0000" shininess={30} />
+        <boxGeometry args={[pillarWidth, pillarHeight, pillarWidth, 8, 64, 8]} />
+        <meshStandardMaterial 
+          color="#991B1B" 
+          roughness={0.3}
+          metalness={0.5}
+        />
       </mesh>
       <mesh ref={pillar3Ref as any} position={pillarPositions[2]} castShadow receiveShadow>
-        <boxGeometry args={[pillarWidth, pillarHeight, pillarWidth]} />
-        <meshPhongMaterial color="#8B0000" shininess={30} />
+        <boxGeometry args={[pillarWidth, pillarHeight, pillarWidth, 8, 64, 8]} />
+        <meshStandardMaterial 
+          color="#991B1B" 
+          roughness={0.3}
+          metalness={0.5}
+        />
       </mesh>
       <mesh ref={pillar4Ref as any} position={pillarPositions[3]} castShadow receiveShadow>
-        <boxGeometry args={[pillarWidth, pillarHeight, pillarWidth]} />
-        <meshPhongMaterial color="#8B0000" shininess={30} />
+        <boxGeometry args={[pillarWidth, pillarHeight, pillarWidth, 8, 64, 8]} />
+        <meshStandardMaterial 
+          color="#991B1B" 
+          roughness={0.3}
+          metalness={0.5}
+        />
       </mesh>
 
       {/* Two thick horizontal internal beams at 1st-2nd floor level */}
       <mesh position={[x, y + blockY - 1, z - blockDepth/4]} castShadow receiveShadow>
-        <boxGeometry args={[blockWidth - 4, 1.5, 1]} />
-        <meshPhongMaterial color="#6B0000" shininess={20} />
+        <boxGeometry args={[blockWidth - 4, 1.5, 1, 32, 4, 4]} />
+        <meshStandardMaterial 
+          color="#7C2D12" 
+          roughness={0.4}
+          metalness={0.3}
+        />
       </mesh>
       <mesh position={[x, y + blockY - 1, z + blockDepth/4]} castShadow receiveShadow>
-        <boxGeometry args={[blockWidth - 4, 1.5, 1]} />
-        <meshPhongMaterial color="#6B0000" shininess={20} />
+        <boxGeometry args={[blockWidth - 4, 1.5, 1, 32, 4, 4]} />
+        <meshStandardMaterial 
+          color="#7C2D12" 
+          roughness={0.4}
+          metalness={0.3}
+        />
       </mesh>
 
       {/* Slim external roof beam (thinner than internal) */}
       <mesh position={[x, y + blockY + blockHeight/2 + 0.25, z]} castShadow receiveShadow>
-        <boxGeometry args={[blockWidth + 2, 0.5, blockDepth + 1]} />
-        <meshPhongMaterial color="#7A0000" shininess={25} />
+        <boxGeometry args={[blockWidth + 2, 0.5, blockDepth + 1, 48, 2, 20]} />
+        <meshStandardMaterial 
+          color="#A21CAF" 
+          roughness={0.25}
+          metalness={0.7}
+        />
       </mesh>
 
       {/* Blue grid windows on front façade */}
@@ -167,8 +220,12 @@ const MASPBuilding = ({ position }: { position: [number, number, number] }) => {
 
       {/* Adjacent tall dark-grey cuboid tower */}
       <mesh position={[x + 35, y + 20, z]} castShadow receiveShadow>
-        <boxGeometry args={[12, 40, 10]} />
-        <meshPhongMaterial color="#2D3748" shininess={15} />
+        <boxGeometry args={[12, 40, 10, 24, 80, 20]} />
+        <meshStandardMaterial 
+          color="#374151" 
+          roughness={0.4}
+          metalness={0.6}
+        />
       </mesh>
 
       {/* Tower windows */}
@@ -212,10 +269,11 @@ const Building = ({ position, size, color, name }: any) => {
     <group>
       {/* Main building structure with higher resolution */}
       <mesh ref={buildingRef as any} castShadow receiveShadow>
-        <boxGeometry args={[size[0], size[1], size[2]]} />
-        <meshPhongMaterial 
+        <boxGeometry args={[size[0], size[1], size[2], 16, 32, 16]} />
+        <meshStandardMaterial 
           color={color}
-          shininess={30}
+          roughness={0.3}
+          metalness={0.4}
         />
       </mesh>
       
@@ -260,10 +318,11 @@ const Sidewalk = ({ position, size }: { position: [number, number, number], size
 
   return (
     <mesh ref={sidewalkRef as any} receiveShadow>
-      <boxGeometry args={[size[0], size[1], size[2], 8, 1, 8]} />
+      <boxGeometry args={[size[0], size[1], size[2], 32, 4, 32]} />
       <meshStandardMaterial 
-        color="#E2E8F0"
-        roughness={0.8}
+        color="#F1F5F9"
+        roughness={0.7}
+        metalness={0.05}
       />
     </mesh>
   )
@@ -279,10 +338,11 @@ const Street = ({ position, size }: { position: [number, number, number], size: 
 
   return (
     <mesh ref={streetRef as any} receiveShadow>
-      <boxGeometry args={[size[0], size[1], size[2], 12, 1, 12]} />
+      <boxGeometry args={[size[0], size[1], size[2], 48, 4, 48]} />
       <meshStandardMaterial 
-        color="#4A5568"
-        roughness={0.9}
+        color="#2D3748"
+        roughness={0.95}
+        metalness={0.02}
       />
     </mesh>
   )
@@ -315,10 +375,11 @@ export const Environment = () => {
     <group>
       {/* Ground */}
       <mesh ref={groundRef as any} receiveShadow>
-        <boxGeometry args={[200, 1, 200, 20, 1, 20]} />
+        <boxGeometry args={[200, 1, 200, 64, 4, 64]} />
         <meshStandardMaterial 
-          color="#718096"
-          roughness={0.8}
+          color="#5A6B7D"
+          roughness={0.85}
+          metalness={0.1}
         />
       </mesh>
 
