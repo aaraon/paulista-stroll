@@ -55,13 +55,30 @@ const MASPBuilding = ({ position }: { position: [number, number, number] }) => {
     type: 'Static',
   }))
 
-  pillarPositions.forEach((pillarPos, index) => {
-    useBox(() => ({
-      position: pillarPos,
-      args: [pillarWidth, pillarHeight, pillarWidth],
-      type: 'Static',
-    }))
-  })
+  // Individual pillar physics bodies (can't use hooks in loops)
+  const [pillar1Ref] = useBox(() => ({
+    position: pillarPositions[0],
+    args: [pillarWidth, pillarHeight, pillarWidth],
+    type: 'Static',
+  }))
+  
+  const [pillar2Ref] = useBox(() => ({
+    position: pillarPositions[1],
+    args: [pillarWidth, pillarHeight, pillarWidth],
+    type: 'Static',
+  }))
+  
+  const [pillar3Ref] = useBox(() => ({
+    position: pillarPositions[2],
+    args: [pillarWidth, pillarHeight, pillarWidth],
+    type: 'Static',
+  }))
+  
+  const [pillar4Ref] = useBox(() => ({
+    position: pillarPositions[3],
+    args: [pillarWidth, pillarHeight, pillarWidth],
+    type: 'Static',
+  }))
 
   return (
     <group>
