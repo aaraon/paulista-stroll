@@ -89,12 +89,22 @@ const MASPBuilding = ({ position }: { position: [number, number, number] }) => {
       </mesh>
 
       {/* Four external red pillars */}
-      {pillarPositions.map((pillarPos, index) => (
-        <mesh key={`pillar-${index}`} position={pillarPos} castShadow receiveShadow>
-          <boxGeometry args={[pillarWidth, pillarHeight, pillarWidth]} />
-          <meshPhongMaterial color="#8B0000" shininess={30} />
-        </mesh>
-      ))}
+      <mesh ref={pillar1Ref as any} position={pillarPositions[0]} castShadow receiveShadow>
+        <boxGeometry args={[pillarWidth, pillarHeight, pillarWidth]} />
+        <meshPhongMaterial color="#8B0000" shininess={30} />
+      </mesh>
+      <mesh ref={pillar2Ref as any} position={pillarPositions[1]} castShadow receiveShadow>
+        <boxGeometry args={[pillarWidth, pillarHeight, pillarWidth]} />
+        <meshPhongMaterial color="#8B0000" shininess={30} />
+      </mesh>
+      <mesh ref={pillar3Ref as any} position={pillarPositions[2]} castShadow receiveShadow>
+        <boxGeometry args={[pillarWidth, pillarHeight, pillarWidth]} />
+        <meshPhongMaterial color="#8B0000" shininess={30} />
+      </mesh>
+      <mesh ref={pillar4Ref as any} position={pillarPositions[3]} castShadow receiveShadow>
+        <boxGeometry args={[pillarWidth, pillarHeight, pillarWidth]} />
+        <meshPhongMaterial color="#8B0000" shininess={30} />
+      </mesh>
 
       {/* Two thick horizontal internal beams at 1st-2nd floor level */}
       <mesh position={[x, y + blockY - 1, z - blockDepth/4]} castShadow receiveShadow>
