@@ -1,7 +1,4 @@
-import { useRef, useMemo } from 'react'
-import { useLoader } from '@react-three/fiber'
 import { useBox } from '@react-three/cannon'
-import * as THREE from 'three'
 
 // São Paulo landmarks data (excluding MASP - will be rendered separately)
 const landmarks = [
